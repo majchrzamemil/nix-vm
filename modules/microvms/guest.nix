@@ -178,6 +178,7 @@ in
   microvm.vfkit.extraArgs = lib.mkIf (vmSpec.hypervisor == "vfkit") vmSpec.vfkitExtraArgs;
 
   # Guest vsock CID for qemu/vhost-vsock. We reuse vsockPort as CID (≥1024, above reserved range).
+  # Ephemeral instances get a random CID at launch, so they can run concurrently.
   microvm.vsock.cid = lib.mkIf (
     vmSpec.hypervisor == "qemu" && vmSpec.forwardSshAgent
   ) vmSpec.vsockPort;

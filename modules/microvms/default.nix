@@ -1191,6 +1191,9 @@ in
                 mac=$(_rand_mac); rvport=$(_sandy_rvport_for_mac "$mac")
               done
               edits+=(-e "s|mac=([0-9a-f]{2}:){5}[0-9a-f]{2}|mac=$mac|")
+              # The guest only dials the host (CID 2), so its own CID just has to be unique host-wide;
+              # the baked one would let only one instance of this VM attach vhost-vsock.
+              edits+=(-e "s/guest-cid=[0-9]+/guest-cid=$(( $(od -An -N4 -tu4 /dev/urandom) % 0x7fff0000 + 0x10000 ))/")
             else
               mac=$(grep -oE 'mac=([0-9a-f]{2}:){5}[0-9a-f]{2}' "$INST_DIR/microvm-run" | head -1 | sed 's/^mac=//')
               rvport=$(_sandy_rvport_for_mac "$mac")
